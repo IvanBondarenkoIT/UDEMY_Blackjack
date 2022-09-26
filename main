@@ -1,0 +1,97 @@
+############### Blackjack Project #####################
+
+#Difficulty Expert 🤯: Only use Hint 1 to complete the project.
+
+############### Our Blackjack House Rules #####################
+
+## The deck is unlimited in size. 
+## There are no jokers. 
+## The Jack/Queen/King all count as 10.
+## The the Ace can count as 11 or 1.
+## Use the following list as the deck of cards:
+## cards = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+## The cards in the list have equal probability of being drawn.
+## Cards are not removed from the deck as they are drawn.
+## The computer is the dealer.
+
+##################### Hints #####################
+
+#Hint 1: Go to this website and try out the Blackjack game: 
+#   https://games.washingtonpost.com/games/blackjack/
+#Then try out the completed Blackjack project here: 
+#   http://blackjack-final.appbrewery.repl.run
+
+import random
+from art import logo
+
+cards = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+
+
+def end_game(your_cards, comp_cards, text_):
+    print(f"Your final hand: {your_cards}, final score: {sum(your_cards)}")
+    print(f"Computer's final hand: {comp_cards}, final score: {sum(comp_cards)}")
+    print(text_)
+
+
+def ace_check(hand):
+    if 11 in hand and sum(hand) > 21:
+        hand[hand.index(11)] = 1
+
+
+def user_pass(your_cards, comp_cards):
+
+    while sum(comp_cards) < 17:
+        comp_cards.append(random.choice(cards))
+        ace_check(comp_cards)
+        if sum(comp_cards) > 21:
+            end_game(your_cards, comp_cards, "Opponent went over. You win 😁")
+            return
+
+    if sum(your_cards) == sum(comp_cards):
+        end_game(your_cards, comp_cards, "Draw 🙃")
+
+    elif sum(your_cards) < sum(comp_cards):
+        end_game(your_cards, comp_cards, "You lose 😤")
+
+    else:
+        end_game(your_cards, comp_cards, "You win 😃")
+
+
+
+def check_result(your_cards, comp_cards):
+    if sum(comp_cards) == 21:
+        end_game(your_cards, comp_cards, "Lose, opponent has Blackjack 😱")
+        return False
+    if sum(your_cards) > 21:
+        end_game(your_cards, comp_cards, "You went over. You lose 😭")
+        return False
+
+    return True
+
+
+def cards_on_table(your_cards, comp_cards):
+    print(f"Your cards: {your_cards}, current score: {sum(your_cards)}")
+    print(f"Computer's first card: [{comp_cards[0]}]")
+
+
+def game_start():
+    # clear
+    user_answer_continue = input("Do you want to play a game of Blackjack? Type 'y' or 'n':").lower()
+    if user_answer_continue == 'n':
+        return
+
+    print(logo)
+    your_cards = [random.choice(cards) for _ in range(2)]
+    comp_cards = [random.choice(cards) for _ in range(2)]
+    while check_result(your_cards, comp_cards):
+        cards_on_table(your_cards, comp_cards)
+        if input("Type 'y' to get another card, type 'n' to pass: ").lower() == 'y':
+            your_cards.append(random.choice(cards))
+            ace_check(your_cards)
+        else:
+            user_pass(your_cards, comp_cards)
+            break
+    game_start()
+
+
+game_start()
